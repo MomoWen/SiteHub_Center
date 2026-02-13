@@ -8,6 +8,7 @@ from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
+from sitehub.api.v1.apps import router as apps_router
 from sitehub.config import load_settings
 
 logger = logging.getLogger("sitehub")
@@ -29,6 +30,7 @@ def create_app() -> FastAPI:
     app = FastAPI(lifespan=lifespan)
     app.state.settings = settings
     app.state.ready = False
+    app.include_router(apps_router)
 
     @app.get("/healthz")
     async def healthz() -> dict[str, Any]:
@@ -44,13 +46,23 @@ def create_app() -> FastAPI:
     async def _validation_error_handler(
         request: Request, exc: RequestValidationError
     ) -> JSONResponse:
+        def _sanitize(value: Any) -> Any:
+            if value is None or isinstance(value, (str, int, float, bool)):
+                return value
+            if isinstance(value, list):
+                return [_sanitize(v) for v in value]
+            if isinstance(value, dict):
+                return {str(k): _sanitize(v) for k, v in value.items()}
+            return str(value)
+
+        details = [_sanitize(err) for err in exc.errors()]
         return JSONResponse(
             status_code=422,
             content={
                 "error": {
                     "type": "validation_error",
                     "message": "Request validation failed",
-                    "details": exc.errors(),
+                    "details": details,
                     "path": str(request.url.path),
                 }
             },
