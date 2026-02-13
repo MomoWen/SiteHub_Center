@@ -9,6 +9,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
 from sitehub.api.v1.apps import router as apps_router
+from sitehub.api.v1.env import router as env_router
 from sitehub.config import load_settings
 
 logger = logging.getLogger("sitehub")
@@ -31,6 +32,7 @@ def create_app() -> FastAPI:
     app.state.settings = settings
     app.state.ready = False
     app.include_router(apps_router)
+    app.include_router(env_router)
 
     @app.get("/healthz")
     async def healthz() -> dict[str, Any]:

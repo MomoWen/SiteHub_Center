@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="820">
+  <rect width="100%" height="100%" fill="#0b0f14" />
+  <text x="20" y="30" fill="#e6edf3" font-family="Menlo, Consolas, monospace" font-size="16">
+    <tspan x="20" y="30">{</tspan>
+    <tspan x="20" dy="20">  &quot;status&quot;: &quot;degraded&quot;,</tspan>
+    <tspan x="20" dy="20">  &quot;timestamp&quot;: &quot;2026-02-13T13:00:00Z&quot;,</tspan>
+    <tspan x="20" dy="20">  &quot;target&quot;: {</tspan>
+    <tspan x="20" dy="20">    &quot;host&quot;: &quot;10.8.8.80&quot;,</tspan>
+    <tspan x="20" dy="20">    &quot;ssh_user&quot;: &quot;root&quot;,</tspan>
+    <tspan x="20" dy="20">    &quot;ssh_port&quot;: 22</tspan>
+    <tspan x="20" dy="20">  },</tspan>
+    <tspan x="20" dy="20">  &quot;ssh_latency_ms&quot;: 2450,</tspan>
+    <tspan x="20" dy="20">  &quot;warnings&quot;: [&quot;ssh_latency_high&quot;],</tspan>
+    <tspan x="20" dy="20">  &quot;paths&quot;: [</tspan>
+    <tspan x="20" dy="20">    {</tspan>
+    <tspan x="20" dy="20">      &quot;path&quot;: &quot;/vol1/1000/&quot;,</tspan>
+    <tspan x="20" dy="20">      &quot;method&quot;: &quot;ssh&quot;,</tspan>
+    <tspan x="20" dy="20">      &quot;exists&quot;: true,</tspan>
+    <tspan x="20" dy="20">      &quot;readable&quot;: true,</tspan>
+    <tspan x="20" dy="20">      &quot;writable&quot;: true,</tspan>
+    <tspan x="20" dy="20">      &quot;status&quot;: &quot;ok&quot;,</tspan>
+    <tspan x="20" dy="20">      &quot;reason&quot;: null</tspan>
+    <tspan x="20" dy="20">    },</tspan>
+    <tspan x="20" dy="20">    {</tspan>
+    <tspan x="20" dy="20">      &quot;path&quot;: &quot;/vol1/1000/MyDocker/web-cluster/sites&quot;,</tspan>
+    <tspan x="20" dy="20">      &quot;method&quot;: &quot;ssh&quot;,</tspan>
+    <tspan x="20" dy="20">      &quot;exists&quot;: true,</tspan>
+    <tspan x="20" dy="20">      &quot;readable&quot;: true,</tspan>
+    <tspan x="20" dy="20">      &quot;writable&quot;: false,</tspan>
+    <tspan x="20" dy="20">      &quot;status&quot;: &quot;permission_denied&quot;,</tspan>
+    <tspan x="20" dy="20">      &quot;reason&quot;: &quot;Permission denied&quot;</tspan>
+    <tspan x="20" dy="20">    }</tspan>
+    <tspan x="20" dy="20">  ],</tspan>
+    <tspan x="20" dy="20">  &quot;disk&quot;: {</tspan>
+    <tspan x="20" dy="20">    &quot;status&quot;: &quot;ok&quot;,</tspan>
+    <tspan x="20" dy="20">    &quot;total_bytes&quot;: 1099511627776,</tspan>
+    <tspan x="20" dy="20">    &quot;used_bytes&quot;: 536870912000,</tspan>
+    <tspan x="20" dy="20">    &quot;free_bytes&quot;: 562640715776</tspan>
+    <tspan x="20" dy="20">  },</tspan>
+    <tspan x="20" dy="20">  &quot;nginx&quot;: {</tspan>
+    <tspan x="20" dy="20">    &quot;method&quot;: &quot;ssh&quot;,</tspan>
+    <tspan x="20" dy="20">    &quot;binary_path&quot;: &quot;/usr/sbin/nginx&quot;,</tspan>
+    <tspan x="20" dy="20">    &quot;config_path&quot;: &quot;/etc/nginx/nginx.conf&quot;,</tspan>
+    <tspan x="20" dy="20">    &quot;config_dir&quot;: &quot;/etc/nginx/conf.d&quot;,</tspan>
+    <tspan x="20" dy="20">    &quot;config_readable&quot;: true,</tspan>
+    <tspan x="20" dy="20">    &quot;config_writable&quot;: false,</tspan>
+    <tspan x="20" dy="20">    &quot;dir_readable&quot;: true,</tspan>
+    <tspan x="20" dy="20">    &quot;dir_writable&quot;: false</tspan>
+    <tspan x="20" dy="20">  }</tspan>
+    <tspan x="20" dy="20">}</tspan>
+  </text>
+</svg>
