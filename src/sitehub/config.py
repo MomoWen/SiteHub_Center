@@ -22,6 +22,7 @@ class Settings:
     env_host: str
     ssh_user: str | None
     ssh_port: int | None
+    ssh_private_key_path: str | None
     ssh_connect_timeout_s: float
     env_probe_timeout_s: float
     nginx_conf_path: str | None
@@ -103,6 +104,9 @@ def load_settings() -> Settings:
     env_host = _env_str("SITEHUB_ENV_HOST", dotenv=dotenv) or "10.8.8.80"
     ssh_user = _env_str("SITEHUB_SSH_USER", dotenv=dotenv)
     ssh_port = _env_int_optional("SITEHUB_SSH_PORT", dotenv=dotenv)
+    ssh_private_key_path = _env_str("SSH_PRIVATE_KEY_PATH", dotenv=dotenv)
+    if ssh_private_key_path:
+        ssh_private_key_path = str(Path(ssh_private_key_path).expanduser())
     ssh_connect_timeout_s = _env_float("SITEHUB_SSH_CONNECT_TIMEOUT", 2.0, dotenv=dotenv)
     env_probe_timeout_s = _env_float("SITEHUB_ENV_PROBE_TIMEOUT", 5.0, dotenv=dotenv)
     nginx_conf_path = _env_str("NGINX_CONF_PATH", dotenv=dotenv)
@@ -135,6 +139,7 @@ def load_settings() -> Settings:
         env_host=env_host,
         ssh_user=ssh_user,
         ssh_port=ssh_port,
+        ssh_private_key_path=ssh_private_key_path,
         ssh_connect_timeout_s=ssh_connect_timeout_s,
         env_probe_timeout_s=env_probe_timeout_s,
         nginx_conf_path=nginx_conf_path,

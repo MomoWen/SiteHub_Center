@@ -70,6 +70,26 @@ bash scripts/deploy.sh --site-root "$SITE_ROOT" --rollback 20260209120000
 
 部署与回滚过程会追加写入 `sitehub.log`。
 
+## 站点配置（sitehub.yaml）
+
+部署引擎会读取站点根目录下的 `sitehub.yaml` 生成 Nginx 配置。
+
+```yaml
+name: demo-site
+port: 8498
+mode: static
+```
+
+字段说明：
+
+- `name`：站点名
+- `port`：应用端口（proxy 模式下转发到该端口）
+- `mode`：`proxy` 或 `static`，默认 `proxy`
+
+当 `mode=static` 时，Nginx 从 `/usr/share/nginx/sites/<name>` 提供静态文件，需要容器挂载：
+
+`/vol1/1000/MyDocker/web-cluster/sites:/usr/share/nginx/sites:ro`
+
 ## Nginx 安全更新
 
 更新流程：备份 → 写入 → `nginx -t` 预检 → 失败回滚/成功 reload。
@@ -88,5 +108,6 @@ sudo bash scripts/nginx-safe-update.sh --src /path/to/generated.conf --dest /etc
 
 ```bash
 .venv/bin/flake8 src/
+.venv/bin/mypy src/
 .venv/bin/pytest
 ```

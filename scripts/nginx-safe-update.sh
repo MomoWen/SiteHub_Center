@@ -79,6 +79,7 @@ cp -a "$DEST" "$backup"
 log "NGINX" "action=backup status=success dest=${DEST} backup=${backup}"
 
 cp -a "$SRC" "$DEST"
+chmod 644 "$DEST"
 
 if ! "$NGINX_BIN" -t; then
   cp -a "$backup" "$DEST"

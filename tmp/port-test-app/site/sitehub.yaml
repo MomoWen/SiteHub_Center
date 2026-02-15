@@ -1,0 +1,4 @@
+name: port-test-app
+port: 8085
+mode: static
+external_port: 8401

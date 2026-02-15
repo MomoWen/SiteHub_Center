@@ -4,14 +4,13 @@ from pathlib import Path
 from typing import Any
 
 import yaml
-from pydantic import BaseModel, ConfigDict, ValidationError
+from pydantic import ValidationError
+
+from sitehub.models.site_config import SiteConfig
 
 
-class SitehubYaml(BaseModel):
-    model_config = ConfigDict(extra="allow")
-
-    name: str
-    port: int
+class SitehubYaml(SiteConfig):
+    pass
 
 
 def load_sitehub_yaml(file_path: Path) -> dict[str, Any]:
@@ -24,4 +23,4 @@ def load_sitehub_yaml(file_path: Path) -> dict[str, Any]:
         validated = SitehubYaml.model_validate(data)
     except ValidationError as exc:
         raise ValueError(str(exc)) from exc
-    return validated.model_dump(mode="python")
+    return validated.model_dump(mode="python", exclude_none=True)

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import hashlib
 import json
 import os
 import shutil
@@ -19,6 +20,9 @@ DEFAULT_PROBE_PATHS = (
 DEFAULT_NGINX_CONF = "/etc/nginx/nginx.conf"
 DEFAULT_NGINX_CONF_DIR = "/etc/nginx/conf.d"
 SSH_WARNING_THRESHOLD_MS = 2000
+SSH_CONTROL_PERSIST_S = 60
+SSH_MAX_ATTEMPTS = 2
+SSH_RETRY_BACKOFF_S = 0.2
 
 
 def _ssh_target(settings: Settings) -> str | None:
@@ -40,10 +44,35 @@ def _ssh_base_args(settings: Settings) -> list[str]:
         f"ConnectTimeout={int(settings.ssh_connect_timeout_s)}",
         "-o",
         "ConnectionAttempts=1",
+        "-o",
+        "PasswordAuthentication=no",
+        "-o",
+        "IdentitiesOnly=yes",
+        "-o",
+        "StrictHostKeyChecking=no",
+        "-o",
+        "UserKnownHostsFile=/dev/null",
+        "-o",
+        "LogLevel=DEBUG3",
+        "-o",
+        "ControlMaster=auto",
+        "-o",
+        f"ControlPersist={SSH_CONTROL_PERSIST_S}s",
+        "-o",
+        f"ControlPath={_ssh_control_path(settings)}",
     ]
+    if settings.ssh_private_key_path:
+        args.extend(["-i", settings.ssh_private_key_path])
     if settings.ssh_port:
         args.extend(["-p", str(settings.ssh_port)])
     return args
+
+
+def _ssh_control_path(settings: Settings) -> str:
+    target = _ssh_target(settings) or "unknown"
+    port = settings.ssh_port or 22
+    digest = hashlib.sha1(f"{target}:{port}".encode("utf-8")).hexdigest()[:12]
+    return f"/tmp/sitehub-ssh-{digest}"
 
 
 async def _run_ssh_command(
@@ -53,22 +82,34 @@ async def _run_ssh_command(
     if not target:
         return 255, "", "ssh_target_missing", 0.0
     args = _ssh_base_args(settings)
-    start = time.monotonic()
-    proc = await asyncio.create_subprocess_exec(
-        *args,
-        target,
-        "bash",
-        "-lc",
-        command,
-        stdout=asyncio.subprocess.PIPE,
-        stderr=asyncio.subprocess.PIPE,
-    )
-    try:
-        stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout=timeout_s)
-    except asyncio.TimeoutError:
-        proc.kill()
-        return 124, "", "ssh_timeout", time.monotonic() - start
-    return proc.returncode or 0, stdout.decode(), stderr.decode(), time.monotonic() - start
+    for attempt in range(SSH_MAX_ATTEMPTS):
+        start = time.monotonic()
+        proc = await asyncio.create_subprocess_exec(
+            *args,
+            target,
+            "bash",
+            "-lc",
+            command,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
+        )
+        try:
+            stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout=timeout_s)
+            rc = proc.returncode or 0
+            elapsed = time.monotonic() - start
+        except asyncio.TimeoutError:
+            proc.kill()
+            rc = 124
+            stdout = b""
+            stderr = b"ssh_timeout"
+            elapsed = time.monotonic() - start
+        if rc == 0:
+            return rc, stdout.decode(), stderr.decode(), elapsed
+        if attempt < SSH_MAX_ATTEMPTS - 1:
+            await asyncio.sleep(SSH_RETRY_BACKOFF_S * (attempt + 1))
+            continue
+        return rc, stdout.decode(), stderr.decode(), elapsed
+    return 255, "", "ssh_failed", 0.0
 
 
 async def measure_ssh_latency(settings: Settings) -> tuple[int | None, str | None]:
@@ -181,7 +222,7 @@ def _disk_usage_from_local(path: Path) -> dict[str, Any]:
     }
 
 
-async def _disk_usage_from_remote(settings: Settings, path: str) -> dict[str, Any] | None:
+async def _disk_usage_from_remote(settings: Settings, path: str) -> dict[str, Any]:
     command = f"df -k '{path}' | tail -n 1"
     rc, stdout, stderr, _ = await _run_ssh_command(settings, command, settings.env_probe_timeout_s)
     if rc != 0:

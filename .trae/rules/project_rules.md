@@ -19,11 +19,18 @@
 
 5) 命令
 - Lint：.venv/bin/flake8 src/
+- Types：.venv/bin/mypy .（严格模式，提交前必须通过）
 - Spec：openspec validate
 - Test：.venv/bin/pytest
 - Dry-run：bash scripts/deploy.sh --dry-run
 
-6) 发布与回滚
+6) Mypy 配置
+- 基础环境：python_version = 3.10
+- 严格约束：disallow_untyped_defs = True；disallow_incomplete_defs = True
+- 预检告警：warn_unused_ignores = True；warn_no_return = True
+- 兼容策略：ignore_missing_imports = True（第三方库缺失类型存根时不阻塞）
+
+7) 发布与回滚
 - deploy.sh 实现 releases/ 与 current 的原子替换
 
 7) 冲突与文档

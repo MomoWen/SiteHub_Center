@@ -4,7 +4,7 @@ from pathlib import Path
 from fastapi.testclient import TestClient
 
 from sitehub.main import create_app
-from sitehub.models.apps import AppRecord, AppStatus
+from sitehub.models.apps import AppRecord, AppRegisterRequest, AppStatus
 from sitehub.pocketbase import get_pocketbase_client
 
 
@@ -26,7 +26,7 @@ def test_readyz() -> None:
 
 def test_apps_register() -> None:
     class DummyPocketBase:
-        async def create_app(self, payload):
+        async def create_app(self, payload: AppRegisterRequest) -> AppRecord:
             return AppRecord(
                 id="rec_test",
                 name=payload.name,
@@ -72,7 +72,7 @@ def test_apps_register_rejects_absolute_path() -> None:
 
 def test_apps_register_parses_sitehub_yaml(tmp_path: Path) -> None:
     class DummyPocketBase:
-        async def create_app(self, payload):
+        async def create_app(self, payload: AppRegisterRequest) -> AppRecord:
             return AppRecord(
                 id="rec_test",
                 name=payload.name,
@@ -108,12 +108,12 @@ def test_apps_register_parses_sitehub_yaml(tmp_path: Path) -> None:
             json={"name": "MyBookmark", "port": 8081, "path": "apps/MyBookmark", "status": "running"},
         )
     assert resp.status_code == 201
-    assert resp.json()["sitehub_config"] == {"name": "MyBookmark", "port": 8081}
+    assert resp.json()["sitehub_config"] == {"name": "MyBookmark", "port": 8081, "mode": "proxy"}
 
 
 def test_apps_register_rejects_sitehub_yaml_missing_required_fields(tmp_path: Path) -> None:
     class DummyPocketBase:
-        async def create_app(self, payload):
+        async def create_app(self, payload: AppRegisterRequest) -> AppRecord:
             raise RuntimeError("should not be called")
 
     (tmp_path / "apps" / "MyBookmark").mkdir(parents=True)
