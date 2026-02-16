@@ -1,3 +1,10 @@
+关联 specs 模块：
+- specs/dependency-installation-policy
+- specs/fastapi-service-skeleton
+- specs/nginx-safe-config-update
+- specs/release-deploy-and-rollback
+- specs/site-provisioning
+
 ## Context
 
 本仓库定位为 SiteHub 母版模板：后续多个项目会以此为起点快速落地站点。当前仓库已有 OpenSpec 工作流与少量脚本（如依赖安装网络策略、GitHub 初始化推送），但缺少可重复、可验证、可回滚的“运行与部署基线”，也缺少最小可运行应用骨架来承载后续业务。

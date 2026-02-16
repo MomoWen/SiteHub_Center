@@ -1,3 +1,5 @@
+> 状态：DEPRECATED —— 本端口冲突扫描能力已被单端口网关模式取代。
+
 ## ADDED Requirements
 
 ### Requirement: External port conflicts are detected

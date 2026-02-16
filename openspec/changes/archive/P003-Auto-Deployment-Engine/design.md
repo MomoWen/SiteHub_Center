@@ -1,3 +1,8 @@
+关联 specs 模块：
+- specs/auto-deployment-engine
+- specs/nginx-safe-config-update
+- specs/ssh-code-sync
+
 ## Context
 
 需要在 SiteHub_Center 中建立从开发机（120）到宿主机（80）的自动化部署引擎，绕过 Git，使用 SSH 进行源码同步，并在同步完成后根据 sitehub.yaml 自动下发 Nginx 配置与热重载。当前已有 SSH 连接配置与环境探测能力，以及 Nginx 安全更新脚本，但缺少部署服务层的编排与对 rsync/scp 的封装。

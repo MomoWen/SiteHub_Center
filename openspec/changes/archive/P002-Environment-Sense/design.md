@@ -1,3 +1,7 @@
+关联 specs 模块：
+- specs/app-registry
+- specs/environment-sense
+
 ## Context
 
 管理端需要在 FnOS 环境中验证宿主机路径与 Nginx 配置的可访问性，当前缺少对不可达与权限不足的精确区分，也缺少可读的健康报告输出。探测过程可能受到 10.8.8.80 宿主机负载影响，需要避免阻塞 API 请求。安全约束要求禁止硬编码 root 密码，优先使用 SSH Key 或 MCP 授权链路。Nginx 配置更新需在修改前自动备份并保留最近 5 个版本。

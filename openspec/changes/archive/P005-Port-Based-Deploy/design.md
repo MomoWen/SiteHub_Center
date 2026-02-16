@@ -1,3 +1,12 @@
+# P005 Port-Based-Deploy [DEPRECATED]
+
+本方案已被后续的单端口网关重构取代。
+
+关联 specs 模块：
+- specs/site-provisioning
+- specs/port-based-nginx-routing
+- specs/external-port-conflict-scan
+
 ## Context
 
 现有部署流程以 Host 路由为主，Nginx 容器通过 84xx 端口映射对外服务，导致 listen 端口与访问入口不一致时出现命中默认站点的问题。为满足“端口即入口”的运维习惯，需要端口驱动的 vhost 生成策略，并在部署前确保 external_port 不与其他站点冲突。

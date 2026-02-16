@@ -1,3 +1,5 @@
+> 状态：DEPRECATED —— 本端口驱动路由模式已被单端口网关模式取代。
+
 ## ADDED Requirements
 
 ### Requirement: Port-based routing is enabled by external_port
